@@ -68,8 +68,8 @@ class DisloyalDemon : Demon replaces Demon {
 
 	void Chimpout() {
 		BlockThingsIterator iter = BlockThingsIterator.Create(self, 100);
-		Actor closest;
-		double closestDistance;
+		Actor closest = null;
+		double closestDistance = double.infinity;
 
 
 		while (iter.Next()) {
@@ -81,13 +81,7 @@ class DisloyalDemon : Demon replaces Demon {
 			if (!candidate.bIsMonster) {
 				continue;
 			}
-
-			if (!closestDistance) {
-				closestDistance = self.Distance3D(candidate);
-				closest = candidate;
-				continue;
-			}
-
+			
 			double candidateDistance = self.Distance3D(candidate);
 
 			if (candidateDistance < closestDistance) {
