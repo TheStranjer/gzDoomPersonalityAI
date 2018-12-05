@@ -1,4 +1,6 @@
 class DisloyalDemon : Demon replaces Demon {
+	int lastTime;
+
 	Default {
 		Health 150;
 		PainChance 180;
@@ -18,10 +20,12 @@ class DisloyalDemon : Demon replaces Demon {
 
 	States {
 		Spawn:
+			TNT1 A 0 ChimpoutPrep;
 			SARG AB 10 A_Look;
 			Loop;
 		See:
 			SARG AABBCCDD 2 Fast A_Chase;
+			TNT1 A 0 ConsiderChimpingOut;
 			Loop;
 		Melee:
 			SARG EF 8 Fast A_FaceTarget;
@@ -43,5 +47,53 @@ class DisloyalDemon : Demon replaces Demon {
 			SARG N 5;
 			SARG MLKJI 5;
 			Goto See;
+	}
+
+	void ChimpoutPrep() {
+		lastTime = 0;
+	}
+
+	void ConsiderChimpingOut() {
+		int curTime = level.time;
+		if (lastTime > curTime) {
+			return;
+		}
+
+		lastTime = curTime + 32;
+
+		if (random(1,10) == 1) {
+			Chimpout();
+		}
+	}
+
+	void Chimpout() {
+		BlockThingsIterator iter = BlockThingsIterator.Create(self, 100);
+		Actor closest;
+		double closestDistance;
+
+
+		while (iter.Next()) {
+			Actor candidate = iter.thing;
+			if (candidate == self) {
+				continue;
+			}
+
+			if (!closestDistance) {
+				closestDistance = self.Distance3D(candidate);
+				closest = candidate;
+				continue;
+			}
+
+			double candidateDistance = self.Distance3D(candidate);
+
+			if (candidateDistance < closestDistance) {
+				closestDistance = candidateDistance;
+				closest = candidate;
+			}
+		}
+
+		if (closest) {
+			self.target = closest;
+		}
 	}
 }
