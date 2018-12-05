@@ -78,6 +78,10 @@ class DisloyalDemon : Demon replaces Demon {
 				continue;
 			}
 
+			if (!candidate.bIsMonster) {
+				continue;
+			}
+
 			if (!closestDistance) {
 				closestDistance = self.Distance3D(candidate);
 				closest = candidate;
