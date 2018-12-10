@@ -60,11 +60,14 @@ class LeaderBaronOfHell : BaronOfHell replaces BaronOfHell {
 			if (!candidate.bIsMonster) {
 				continue;
 			}
+
+			if (candidate.goal != null || candidate.target != null) {
+				continue;
+			}
 			
 			double candidateDistance = self.Distance3D(candidate);
 
 			if (candidateDistance <= 150) {
-				A_Log("Following me now!");
 				candidate.goal = self;
 			}
 		}
