@@ -21,6 +21,7 @@ class LeaderBaronOfHell : BaronOfHell replaces BaronOfHell {
 			BOSS AB 10 A_Look;
 			Loop;
 		See:
+			TNT1 A 0 Beckon;
 			BOSS AABBCCDD 3 A_Chase;
 			Loop;
 		Melee:
@@ -44,5 +45,28 @@ class LeaderBaronOfHell : BaronOfHell replaces BaronOfHell {
 			BOSS O 8;
 			BOSS NMLKJI 8;
 			Goto See;
+	}
+
+	void Beckon() {
+		BlockThingsIterator iter = BlockThingsIterator.Create(self, 100);
+
+		while (iter.Next()) {
+			Actor candidate = iter.thing;
+
+			if (candidate == self) {
+				continue;
+			}
+
+			if (!candidate.bIsMonster) {
+				continue;
+			}
+			
+			double candidateDistance = self.Distance3D(candidate);
+
+			if (candidateDistance <= 150) {
+				A_Log("Following me now!");
+				candidate.goal = self;
+			}
+		}
 	}
 }
