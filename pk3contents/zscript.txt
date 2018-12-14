@@ -1,3 +1,4 @@
 version "3.4"
 #include "monsters/demon.txt"
 #include "monsters/baronofhell.txt"
+#include "monsters/doomimp.txt"
