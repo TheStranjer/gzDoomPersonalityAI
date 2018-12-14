@@ -8,7 +8,7 @@ class CumtomImp : DoomImp replaces DoomImp
 {
 	Default
 	{
-		Health 100;
+		Health 300;
 		Radius 20;
 		Height 56;
 		Mass 100;
