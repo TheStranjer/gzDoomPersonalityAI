@@ -1,13 +1,26 @@
 class TrailNode : Actor {
 		TrailNode Following;
+		int lastOne;
+		bool visited;
 
 		States {
 			Spawn:
-				TNT1 A -1;
+				RSKU B -1 Bright;
 				Stop;
+
 		}
 
-		void AfterCreated() {
-				Console.PrintF("We're here!");
+		TrailNode endNode() {
+			TrailNode current = self;
+
+			while (current.Following != null) {
+				current = current.Following;
+			}
+
+			return current;
+		}
+
+		void appendToEnd(TrailNode tn) {
+			self.endNode().Following = tn;
 		}
 }

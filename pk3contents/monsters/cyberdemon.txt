@@ -4,9 +4,9 @@
 // Cyberdemon
 //
 //===========================================================================
-class PersistenceHunting : Cyberdemon replaces Cyberdemon {
-	
-	Actor lastNode;
+class PersistenceHuntingCyberdemon : Cyberdemon replaces Cyberdemon {
+	TrailNode firstTrailNode;
+	TrailNode nextTrailNode;
 
 	Default
 	{
@@ -41,15 +41,18 @@ class PersistenceHunting : Cyberdemon replaces Cyberdemon {
 		CYBR ABBCC 3 A_Chase;
 		CYBR D 3 A_Metal;
 		CYBR D 3 A_Chase;
-		CYBR D 3 ConsiderWayPoint;
+		TNT1 A 0 HandleWaypoints;
 		Loop;
 	Missile:
 		CYBR E 6 A_FaceTarget;
 		CYBR F 12 A_CyberAttack;
+		TNT1 A 0 HandleWaypoints;
 		CYBR E 12 A_FaceTarget;
 		CYBR F 12 A_CyberAttack;
+		TNT1 A 0 HandleWaypoints;
 		CYBR E 12 A_FaceTarget;
 		CYBR F 12 A_CyberAttack;
+		TNT1 A 0 HandleWaypoints;
 		Goto See;
 	Pain:
 		CYBR G 10 A_Pain;
@@ -80,31 +83,38 @@ class PersistenceHunting : Cyberdemon replaces Cyberdemon {
 		A_Chase();
 	}
 
-	void ConsiderWayPoint() {
+	void HandleWaypoints() {
 		if (target == null) {
 			return;
 		}
 
+		if (goal != null && goal.GetClassName() == "TrailNode") {
+			nextTrailNode = TrailNode(goal).Following;
+		}
 
-		double distance = goal == null || lastNode == null ? double.infinity : target.Distance3D(lastNode);
+		if (goal == null && nextTrailNode != null) {
+			goal = nextTrailNode;
+			Console.PrintF("Onto the next node at: ("..goal.pos.x..", "..goal.pos.y..")");
+		}
 
-		if (goal != null && distance <= 750) {
+		double distance = goal == null || firstTrailNode == null ? double.infinity : target.Distance3D(firstTrailNode.endNode());
+
+		if (goal != null && distance <= 250) {
 			return;
-		} else if (goal != null) {
-			Console.PrintF("Distance: "..distance);
 		}
 
-		lastNode = Spawn("TrailNode", target.pos);
-		let nextNode = TrailNode(lastNode);
+		Actor nn = Spawn("TrailNode", target.pos);
+		Console.PrintF("Spawned node at ("..nn.pos.x..", "..nn.pos.y..")");
+		let nextNode = TrailNode(nn);
 
-		if (goal == null) {
-			goal = nextNode;
-		} else {
-			let currentGoal = TrailNode(self.goal);
-			let tn = TrailNode(nextNode);
-
-			currentGoal.Following = tn;
+		if (goal == null || goal.GetClassName() != "TrailNode") {
+			firstTrailNode = nextNode;
+			goal = firstTrailNode;
+			Console.PrintF("First node: ("..goal.pos.x..", "..goal.pos.y..")");
+			self.bChaseGoal = 1;
+			return;
 		}
 
+		firstTrailNode.appendToEnd(nextNode);
 	}
 }
