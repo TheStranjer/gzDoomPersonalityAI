@@ -4,8 +4,10 @@
 // Cyberdemon
 //
 //===========================================================================
-class Cyberdemon : Actor
-{
+class PersistenceHunting : Cyberdemon replaces Cyberdemon {
+	
+	Actor lastNode;
+
 	Default
 	{
 		Health 4000;
@@ -39,6 +41,7 @@ class Cyberdemon : Actor
 		CYBR ABBCC 3 A_Chase;
 		CYBR D 3 A_Metal;
 		CYBR D 3 A_Chase;
+		CYBR D 3 ConsiderWayPoint;
 		Loop;
 	Missile:
 		CYBR E 6 A_FaceTarget;
@@ -61,17 +64,7 @@ class Cyberdemon : Actor
 		CYBR P -1 A_BossDeath;
 		Stop;
 	}
-}
 
-
-//===========================================================================
-//
-// Code (must be attached to Actor)
-//
-//===========================================================================
-
-extend class Actor
-{
 	void A_CyberAttack()
 	{
 		if (target)
@@ -86,5 +79,32 @@ extend class Actor
 		A_PlaySound("cyber/hoof", CHAN_BODY, 1, false, ATTN_IDLE);
 		A_Chase();
 	}
-	
+
+	void ConsiderWayPoint() {
+		if (target == null) {
+			return;
+		}
+
+
+		double distance = goal == null || lastNode == null ? double.infinity : target.Distance3D(lastNode);
+
+		if (goal != null && distance <= 750) {
+			return;
+		} else if (goal != null) {
+			Console.PrintF("Distance: "..distance);
+		}
+
+		lastNode = Spawn("TrailNode", target.pos);
+		let nextNode = TrailNode(lastNode);
+
+		if (goal == null) {
+			goal = nextNode;
+		} else {
+			let currentGoal = TrailNode(self.goal);
+			let tn = TrailNode(nextNode);
+
+			currentGoal.Following = tn;
+		}
+
+	}
 }

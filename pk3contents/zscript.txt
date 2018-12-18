@@ -1,4 +1,7 @@
 version "3.4"
+#include "peripherals/trailnode.txt"
+
 #include "monsters/demon.txt"
 #include "monsters/baronofhell.txt"
 #include "monsters/doomimp.txt"
+#include "monsters/cyberdemon.txt"

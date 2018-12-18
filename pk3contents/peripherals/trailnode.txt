@@ -1,0 +1,13 @@
+class TrailNode : Actor {
+		TrailNode Following;
+
+		States {
+			Spawn:
+				TNT1 A -1;
+				Stop;
+		}
+
+		void AfterCreated() {
+				Console.PrintF("We're here!");
+		}
+}
